@@ -143,11 +143,9 @@ export const api = {
     return menuItems;
   },
   addMenuItem(item) {
-    // Generate unique ID
     const newId = `FOOD${String(menuItems.length + 1).padStart(3, "0")}`;
-    // Check if ID already exists to prevent duplicates
     if (menuItems.some((existingItem) => existingItem.id === newId)) {
-      return null; // Prevent adding if ID exists
+      return null;
     }
     const newItem = {
       ...item,
@@ -160,5 +158,26 @@ export const api = {
     };
     menuItems.push(newItem);
     return newItem;
+  },
+  updateMenuItem(id, updatedItem) {
+    const index = menuItems.findIndex((item) => item.id === id);
+    if (index === -1) return null;
+    const newItem = {
+      ...updatedItem,
+      id,
+      rating: updatedItem.rating || 0,
+      ingredients: updatedItem.ingredients ? updatedItem.ingredients.split(",").map((i) => i.trim()) : [],
+      tags: updatedItem.tags ? updatedItem.tags.split(",").map((t) => t.trim()) : [],
+      imageUrl: updatedItem.imageUrl || "https://example.com/default.jpg",
+      model3DUrl: updatedItem.model3DUrl || "https://example.com/default-3d.glb",
+    };
+    menuItems[index] = newItem;
+    return newItem;
+  },
+  deleteMenuItem(id) {
+    const index = menuItems.findIndex((item) => item.id === id);
+    if (index === -1) return false;
+    menuItems.splice(index, 1);
+    return true;
   },
 };

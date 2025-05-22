@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-export default function AddFoodModal({ isOpen, onClose, onAdd }) {
+export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen || !food) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -11,7 +11,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
     setIsSubmitting(true);
 
     const formData = new FormData(e.target);
-    const newFood = {
+    const updatedFood = {
       name: formData.get("name"),
       description: formData.get("description"),
       category: formData.get("category"),
@@ -35,7 +35,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
     };
 
     try {
-      await onAdd(newFood);
+      await onUpdate(food.id, updatedFood);
       onClose();
     } finally {
       setIsSubmitting(false);
@@ -45,13 +45,14 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000]">
       <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-[600px] max-h-[80vh] overflow-y-auto">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Food Item</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Edit Food Item</h2>
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <label className="text-sm text-gray-900 font-medium">
             Name
             <input
               type="text"
               name="name"
+              defaultValue={food.name}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
@@ -61,6 +62,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <textarea
               name="description"
               rows="3"
+              defaultValue={food.description}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -68,6 +70,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             Category
             <select
               name="category"
+              defaultValue={food.category}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             >
@@ -84,6 +87,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               name="price"
               min="0"
               step="1"
+              defaultValue={food.price}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
@@ -96,6 +100,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               min="0"
               max="5"
               step="0.1"
+              defaultValue={food.rating}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -104,6 +109,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="text"
               name="origin"
+              defaultValue={food.origin}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -113,6 +119,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               type="number"
               name="preparationTime"
               min="0"
+              defaultValue={food.preparationTime}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -120,6 +127,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             Availability
             <select
               name="availability"
+              defaultValue={food.availability.toString()}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             >
@@ -131,6 +139,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             Dietary
             <select
               name="dietary"
+              defaultValue={food.dietary}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             >
@@ -145,6 +154,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               type="number"
               name="calories"
               min="0"
+              defaultValue={food.calories}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -154,6 +164,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               type="number"
               name="protein"
               min="0"
+              defaultValue={food.protein}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -163,6 +174,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               type="number"
               name="carbs"
               min="0"
+              defaultValue={food.carbs}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -172,6 +184,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               type="number"
               name="fats"
               min="0"
+              defaultValue={food.fats}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -180,6 +193,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="text"
               name="flavor"
+              defaultValue={food.flavor}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -190,6 +204,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               name="spiceLevel"
               min="0"
               max="5"
+              defaultValue={food.spiceLevel}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -198,6 +213,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="text"
               name="ingredients"
+              defaultValue={food.ingredients?.join(", ")}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -206,6 +222,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="text"
               name="servingSize"
+              defaultValue={food.servingSize}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -214,6 +231,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="text"
               name="tags"
+              defaultValue={food.tags?.join(", ")}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -222,6 +240,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="url"
               name="imageUrl"
+              defaultValue={food.imageUrl}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -230,6 +249,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="url"
               name="model3DUrl"
+              defaultValue={food.model3DUrl}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -239,7 +259,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               disabled={isSubmitting}
               className="px-4 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800 disabled:opacity-50"
             >
-              {isSubmitting ? "Adding..." : "Add Food"}
+              {isSubmitting ? "Updating..." : "Update Food"}
             </button>
             <button
               type="button"

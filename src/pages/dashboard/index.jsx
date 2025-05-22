@@ -1,4 +1,3 @@
-
 import DashboardLayout from "../components/DashboardLayout";
 import MetricsCard from "../components/MetricsCard";
 import PopularItems from "../components/PopularItems";
@@ -10,10 +9,10 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1.5rem", color: "#1f2937" }}>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
         Dashboard Overview
       </h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginBottom: "1.5rem" }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <MetricsCard
           title="Menu Items"
           value={menuItemsCount}
@@ -33,7 +32,7 @@ export default function Dashboard() {
           subtext="This month"
         />
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PopularItems />
         <ActivityChart />
       </div>

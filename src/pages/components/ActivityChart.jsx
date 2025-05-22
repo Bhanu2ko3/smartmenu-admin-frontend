@@ -1,4 +1,3 @@
-// components/ActivityChart.js
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -58,19 +57,15 @@ export default function ActivityChart() {
   };
 
   return (
-    <div className="chart-container">
-      <h2>Sales Activity</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+    <div className="bg-white rounded-xl shadow-md p-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Sales Activity</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <h3 style={{ fontSize: "0.875rem", color: "#6b7280", marginBottom: "0.5rem" }}>
-            Daily Sales
-          </h3>
+          <h3 className="text-sm text-gray-500 mb-2">Daily Sales</h3>
           <Line data={dailyData} options={options} />
         </div>
         <div>
-          <h3 style={{ fontSize: "0.875rem", color: "#6b7280", marginBottom: "0.5rem" }}>
-            Weekly Sales
-          </h3>
+          <h3 className="text-sm text-gray-500 mb-2">Weekly Sales</h3>
           <Line data={weeklyData} options={options} />
         </div>
       </div>

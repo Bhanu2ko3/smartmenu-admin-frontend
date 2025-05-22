@@ -1,4 +1,3 @@
-// components/OrdersTable.js
 import { useState } from "react";
 import { api } from "../lib/api";
 
@@ -31,75 +30,86 @@ export default function OrdersTable() {
   };
 
   return (
-    <div className="table-container">
-      <h2>Orders</h2>
-      <div className="filter-container">
+    <div className="bg-white rounded-xl shadow-md p-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Orders</h2>
+      <div className="flex gap-4 mb-4">
         <input
           type="text"
           placeholder="Search by table number..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border border-gray-300 rounded-md w-full max-w-xs focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
+          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
         >
           <option value="All">All Statuses</option>
           <option value="Pending">Pending</option>
           <option value="Completed">Completed</option>
         </select>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Table Number</th>
-            <th>Items</th>
-            <th>Total (LKR)</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredOrders.map((order) => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.tableNumber}</td>
-              <td>
-                {order.items.map((item, index) => (
-                  <span key={index}>
-                    {menuItems[item.foodId]?.name || item.foodId} (x{item.quantity})
-                    {index < order.items.length - 1 ? ", " : ""}
-                  </span>
-                ))}
-              </td>
-              <td>{calculateTotal(order.items).toLocaleString()}</td>
-              <td>
-                <span className={`status-${order.status.toLowerCase()}`}>
-                  {order.status}
-                </span>
-              </td>
-              <td>{new Date(order.createdAt).toLocaleString()}</td>
-              <td>
-                <button
-                  className="action-btn"
-                  onClick={() => handleView(order.id)}
-                >
-                  View
-                </button>
-                <button
-                  className="action-btn"
-                  onClick={() => handleUpdateStatus(order.id, order.status)}
-                  style={{ marginLeft: "0.5rem" }}
-                >
-                  Update
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-3 text-left text-sm font-semibold text-gray-900">ID</th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-900">Table Number</th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-900">Items</th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-900">Total (LKR)</th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-900">Status</th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-900">Created At</th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-900">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredOrders.map((order) => (
+              <tr key={order.id} className="border-b border-gray-200">
+                <td className="p-3 text-sm text-gray-900">{order.id}</td>
+                <td className="p-3 text-sm text-gray-900">{order.tableNumber}</td>
+                <td className="p-
+
+3 text-sm text-gray-900">
+                  {order.items.map((item, index) => (
+                    <span key={index}>
+                      {menuItems[item.foodId]?.name || item.foodId} (x{item.quantity})
+                      {index < order.items.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </td>
+                <td className="p-3 text-sm text-gray-900">{calculateTotal(order.items).toLocaleString()}</td>
+                <td className="p-3 text-sm">
+                  <span
+                    className={`${
+                      order.status.toLowerCase() === "pending"
+                        ? "text-amber-600"
+                        : "text-green-600"
+                    } font-semibold`}
+                  >
+                    {order.status}
+                  </span>
+                </td>
+                <td className="p-3 text-sm text-gray-900">{new Date(order.createdAt).toLocaleString()}</td>
+                <td className="p-3 text-sm">
+                  <button
+                    className="px-3 py-1 bg-indigo-900 text-white rounded-md hover:bg-indigo-800"
+                    onClick={() => handleView(order.id)}
+                  >
+                    View
+                  </button>
+                  <button
+                    className="px-3 py-1 bg-indigo-900 text-white rounded-md hover:bg-indigo-800 ml-2"
+                    onClick={() => handleUpdateStatus(order.id, order.status)}
+                  >
+                    Update
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -1,13 +1,12 @@
-// components/MetricsCard.js
 export default function MetricsCard({ title, value, icon, subtext }) {
   return (
-    <div className="card">
+    <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-center space-x-4">
-        <div className="icon">{icon}</div>
+        <div className="text-4xl text-indigo-900">{icon}</div>
         <div>
-          <h3>{title}</h3>
-          <p className="value">{value}</p>
-          {subtext && <p className="subtext">{subtext}</p>}
+          <h3 className="text-sm text-gray-500 font-medium">{title}</h3>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          {subtext && <p className="text-xs text-gray-400">{subtext}</p>}
         </div>
       </div>
     </div>
