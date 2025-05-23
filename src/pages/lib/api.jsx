@@ -94,6 +94,45 @@ let menuItems = [
   },
 ];
 
+let settings = {
+  restaurantName: "Smart Food Restaurant",
+  currency: "LKR",
+  taxRate: 0.1, // 10%
+  contactEmail: "contact@smartfood.lk",
+  phone: "+94 112 345 678",
+  address: "123 Food Street, Colombo, Sri Lanka",
+};
+
+let orders = [
+  {
+    id: "ORD001",
+    tableNumber: 5,
+    items: [
+      { foodId: "FOOD001", quantity: 2 },
+      { foodId: "FOOD002", quantity: 1 },
+    ],
+    status: "Pending",
+    createdAt: "2025-05-22T10:30:00Z",
+  },
+  {
+    id: "ORD002",
+    tableNumber: 12,
+    items: [
+      { foodId: "FOOD003", quantity: 3 },
+      { foodId: "FOOD004", quantity: 1 },
+    ],
+    status: "Completed",
+    createdAt: "2025-05-21T15:45:00Z",
+  },
+  {
+    id: "ORD003",
+    tableNumber: 8,
+    items: [{ foodId: "FOOD001", quantity: 1 }],
+    status: "Pending",
+    createdAt: "2025-05-22T12:00:00Z",
+  },
+];
+
 export const api = {
   getDashboardData() {
     return {
@@ -109,35 +148,85 @@ export const api = {
     };
   },
   getOrders() {
-    return [
-      {
-        id: "ORD001",
-        tableNumber: 5,
-        items: [
-          { foodId: "FOOD001", quantity: 2 },
-          { foodId: "FOOD002", quantity: 1 },
-        ],
-        status: "Pending",
-        createdAt: "2025-05-22T10:30:00Z",
-      },
-      {
-        id: "ORD002",
-        tableNumber: 12,
-        items: [
-          { foodId: "FOOD003", quantity: 3 },
-          { foodId: "FOOD004", quantity: 1 },
-        ],
-        status: "Completed",
-        createdAt: "2025-05-21T15:45:00Z",
-      },
-      {
-        id: "ORD003",
-        tableNumber: 8,
-        items: [{ foodId: "FOOD001", quantity: 1 }],
-        status: "Pending",
-        createdAt: "2025-05-22T12:00:00Z",
-      },
-    ];
+    // Sort by createdAt, newest first
+    return [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+  getOrderDetails(id) {
+    const order = orders.find((o) => o.id === id);
+    if (!order) return null;
+    let subtotal = 0;
+    const itemDetails = order.items.map((item) => {
+      const menuItem = menuItems.find((m) => m.id === item.foodId);
+      const itemTotal = menuItem ? menuItem.price * item.quantity : 0;
+      subtotal += itemTotal;
+      return {
+        foodId: item.foodId,
+        name: menuItem ? menuItem.name : "Unknown",
+        quantity: item.quantity,
+        price: menuItem ? menuItem.price : 0,
+        itemTotal,
+      };
+    });
+    const tax = subtotal * settings.taxRate;
+    const total = subtotal + tax;
+    return {
+      ...order,
+      itemDetails,
+      subtotal,
+      tax,
+      total,
+    };
+  },
+  addOrder(order) {
+    const newId = `ORD${String(orders.length + 1).padStart(3, "0")}`;
+    if (orders.some((existingOrder) => existingOrder.id === newId)) {
+      return null;
+    }
+    const newOrder = {
+      id: newId,
+      tableNumber: Number(order.tableNumber),
+      items: order.items.map((item) => ({
+        foodId: item.foodId,
+        quantity: Number(item.quantity),
+      })),
+      status: order.status || "Pending",
+      createdAt: new Date().toISOString(),
+    };
+    orders.push(newOrder);
+    return newOrder;
+  },
+  updateOrder(id, updatedOrder) {
+    const index = orders.findIndex((o) => o.id === id);
+    if (index === -1) return null;
+    const newOrder = {
+      id,
+      tableNumber: Number(updatedOrder.tableNumber),
+      items: updatedOrder.items.map((item) => ({
+        foodId: item.foodId,
+        quantity: Number(item.quantity),
+      })),
+      status: updatedOrder.status,
+      createdAt: orders[index].createdAt, // Preserve original creation time
+    };
+    orders[index] = newOrder;
+    return newOrder;
+  },
+  deleteOrder(id) {
+    const index = orders.findIndex((o) => o.id === id);
+    if (index === -1) return false;
+    orders.splice(index, 1);
+    return true;
+  },
+  updateOrderStatus(id, status) {
+    const index = orders.findIndex((o) => o.id === id);
+    if (index === -1) return false;
+    if (status === "Cancelled") {
+      // Delete the order instead of setting status
+      orders.splice(index, 1);
+      return true;
+    }
+    orders[index].status = status;
+    return true;
   },
   getMenuItems() {
     return menuItems;
@@ -179,5 +268,16 @@ export const api = {
     if (index === -1) return false;
     menuItems.splice(index, 1);
     return true;
+  },
+  getSettings() {
+    return settings;
+  },
+  updateSettings(newSettings) {
+    settings = {
+      ...settings,
+      ...newSettings,
+      taxRate: Number(newSettings.taxRate) || 0,
+    };
+    return settings;
   },
 };

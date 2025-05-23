@@ -1,8 +1,12 @@
-// app/page.js
-
-import { redirect } from 'next/navigation';
+export async function getServerSideProps() {
+  return {
+    redirect: {
+      destination: "/dashboard",
+      permanent: false,
+    },
+  };
+}
 
 export default function Home() {
-  // This is a server component, so redirect works here
-  redirect('/dashboard'); // or /auth/login if login page exists
+  return null;
 }

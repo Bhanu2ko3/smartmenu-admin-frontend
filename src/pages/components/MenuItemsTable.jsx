@@ -83,7 +83,13 @@ export default function MenuItemsTable() {
   return (
   <div className="bg-white rounded-xl shadow-md p-6">
     <div className="flex justify-between items-center mb-4">
-      <h2 className="text-xl font-bold text-gray-900">Menu Items</h2>
+      <input
+        type="text"
+        placeholder="Search by name..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="p-2 border border-gray-300 rounded-md w-full max-w-[200px] focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
+      />
       <button
         className="bg-indigo-900 text-white px-4 py-2 rounded-md hover:bg-indigo-800 transition-colors"
         onClick={() => setIsAddModalOpen(true)}
@@ -114,13 +120,7 @@ export default function MenuItemsTable() {
       foodName={selectedFood?.name}
     />
     <div className="flex flex-wrap gap-4 mb-4">
-      <input
-        type="text"
-        placeholder="Search by name..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="p-2 border border-gray-300 rounded-md w-full max-w-[200px] focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
-      />
+      
       <select
         value={categoryFilter}
         onChange={(e) => setCategoryFilter(e.target.value)}
@@ -188,19 +188,19 @@ export default function MenuItemsTable() {
             <td className="p-3 text-gray-900">{item.preparationTime}</td>
             <td className="p-3 flex gap-2">
               <button
-                className="text-indigo-900 underline hover:text-indigo-800"
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
                 onClick={() => handleView(item.id)}
               >
                 View
               </button>
               <button
-                className="text-indigo-900 underline hover:text-indigo-800"
+                className="bg-green-200 text-green-700 px-4 py-2 rounded-md hover:bg-green-400"
                 onClick={() => handleEdit(item.id)}
               >
                 Edit
               </button>
               <button
-                className="text-red-600 underline hover:text-red-800"
+                className="bg-red-300 text-red-700 px-2 py-1 rounded-md hover:bg-red-400"
                 onClick={() => handleDelete(item.id)}
               >
                 Delete
