@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { api } from "../lib/api";
+import { api } from "../../lib/api";
 import { toast, ToastContainer } from "react-toastify";
 import ViewOrderModal from "./ViewOrderModal";
 import AddOrderModal from "./AddOrderModal";

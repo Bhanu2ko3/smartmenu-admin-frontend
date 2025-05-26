@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { api } from "../lib/api";
+import { api } from "../../lib/api";
 import AddFoodModal from "./AddFoodModal";
 import ViewFoodModal from "./ViewFoodModal";
 import EditFoodModal from "./EditFoodModal";

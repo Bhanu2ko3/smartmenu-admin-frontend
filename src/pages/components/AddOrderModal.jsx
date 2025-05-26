@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { api } from '../lib/api';
+import { api } from '../../lib/api';
 import { toast } from 'react-toastify'; 
 
 export default function AddOrderModal({ isOpen, onClose, onAdd }) {
