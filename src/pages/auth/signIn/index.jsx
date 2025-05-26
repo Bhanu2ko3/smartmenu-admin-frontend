@@ -18,7 +18,7 @@ export default function Login() {
     const validEmail = "bhanu@gmail.com";
     const validPassword = "1234";
 
-    if (email === validEmail && password === validPassword) {
+    if (email === validEmail && password === validPassword) { 
       // Simulate token save (optional)
       localStorage.setItem("token", "dummy-jwt-token");
 
