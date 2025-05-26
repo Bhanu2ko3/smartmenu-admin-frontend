@@ -1,4 +1,9 @@
 
+export function AuthProvider() {
+  return <></>;
+}
+
+
 // 'use client';
 
 // import { useState} from "react";

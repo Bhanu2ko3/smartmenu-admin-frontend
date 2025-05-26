@@ -1,9 +1,10 @@
-// // src/pages/auth/authProvider/index.jsx
+export function AuthProvider() {
+  return <></>;
+}
 
 // import { createContext, useState, useEffect } from "react";
 // import jwtDecode from "jwt-decode";
 // import { useRouter } from "next/navigation";
-
 
 // export const AuthContext = createContext();
 

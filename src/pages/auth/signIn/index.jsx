@@ -1,3 +1,9 @@
+export function AuthProvider() {
+  return <></>;
+}
+
+
+
 // // app/login/page.js
 // 'use client';
 

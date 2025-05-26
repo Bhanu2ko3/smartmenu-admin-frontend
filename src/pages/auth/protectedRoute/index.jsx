@@ -1,4 +1,14 @@
 
+
+export function AuthProvider() {
+  return <></>;
+}
+
+
+
+
+
+
 // 'use client';
 
 // import { useContext, useEffect } from "react";
