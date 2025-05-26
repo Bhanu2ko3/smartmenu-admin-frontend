@@ -1,23 +1,23 @@
 
-'use client';
+// 'use client';
 
-import { useContext, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { AuthContext } from "../authProvider";
+// import { useContext, useEffect } from "react";
+// import { useRouter } from "next/navigation";
+// import { AuthContext } from "../authProvider";
 
-export default function ProtectedRoute({ children }) {
-  const { user } = useContext(AuthContext);
-  const router = useRouter();
+// export default function ProtectedRoute({ children }) {
+//   const { user } = useContext(AuthContext);
+//   const router = useRouter();
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    }
-  }, [user, router]);
+//   useEffect(() => {
+//     if (!user) {
+//       router.push("/login");
+//     }
+//   }, [user, router]);
 
-  if (!user) {
-    return null;
-  }
+//   if (!user) {
+//     return null;
+//   }
 
-  return children;
-}
+//   return children;
+// }
