@@ -1,7 +1,7 @@
 
 
-export function AuthProvider() {
-  return <></>;
+export default function ProtectedRoute() {
+  return <div>ProtectedRoute Page</div>;
 }
 
 

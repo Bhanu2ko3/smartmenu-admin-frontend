@@ -1,3 +1,3 @@
-export function AuthProvider() {
-  return <></>;
+export default function EditFoodPage() {
+  return <div>Edit Food Page</div>;
 }

@@ -1,10 +1,11 @@
-export function AuthProvider() {
-  return <></>;
+export default function AuthProvider() {
+  return <div>Sign In Page</div>;
 }
 
 // import { createContext, useState, useEffect } from "react";
 // import jwtDecode from "jwt-decode";
 // import { useRouter } from "next/navigation";
+
 
 // export const AuthContext = createContext();
 
