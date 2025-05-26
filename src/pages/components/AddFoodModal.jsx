@@ -1,4 +1,6 @@
-import { useState } from "react";
+'use client';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function AddFoodModal({ isOpen, onClose, onAdd }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,31 +14,51 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
 
     const formData = new FormData(e.target);
     const newFood = {
-      name: formData.get("name"),
-      description: formData.get("description"),
-      category: formData.get("category"),
-      price: Number(formData.get("price")),
-      rating: Number(formData.get("rating")) || 0,
-      origin: formData.get("origin"),
-      preparationTime: Number(formData.get("preparationTime")),
-      availability: formData.get("availability") === "true",
-      dietary: formData.get("dietary"),
-      calories: Number(formData.get("calories")),
-      protein: Number(formData.get("protein")),
-      carbs: Number(formData.get("carbs")),
-      fats: Number(formData.get("fats")),
-      flavor: formData.get("flavor"),
-      spiceLevel: Number(formData.get("spiceLevel")),
-      ingredients: formData.get("ingredients"),
-      servingSize: formData.get("servingSize"),
-      tags: formData.get("tags"),
-      imageUrl: formData.get("imageUrl"),
-      model3DUrl: formData.get("model3DUrl"),
+      name: formData.get('name')?.trim(),
+      description: formData.get('description')?.trim() || null,
+      category: formData.get('category'),
+      price: Number(formData.get('price')),
+      rating: Number(formData.get('rating')) || 0,
+      origin: formData.get('origin')?.trim() || null,
+      preparationTime: Number(formData.get('preparationTime')) || null,
+      availability: formData.get('availability') === 'true',
+      dietary: formData.get('dietary'),
+      calories: Number(formData.get('calories')) || null,
+      protein: Number(formData.get('protein')) || null,
+      carbs: Number(formData.get('carbs')) || null,
+      fats: Number(formData.get('fats')) || null,
+      flavor: formData.get('flavor')?.trim() || null,
+      spiceLevel: Number(formData.get('spiceLevel')) || null,
+      ingredients: formData.get('ingredients')?.trim().split(',').map(item => item.trim()).filter(Boolean) || [],
+      servingSize: formData.get('servingSize')?.trim() || null,
+      tags: formData.get('tags')?.trim().split(',').map(item => item.trim()).filter(Boolean) || [],
+      imageUrl: formData.get('imageUrl')?.trim() || null,
+      model3DUrl: formData.get('model3DUrl')?.trim() || null,
     };
+
+    // Basic validation
+    if (!newFood.name) {
+      toast.error('Name is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!newFood.category) {
+      toast.error('Category is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!newFood.price || newFood.price <= 0) {
+      toast.error('Price must be greater than 0');
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       await onAdd(newFood);
+      toast.success('Food item added successfully');
       onClose();
+    } catch (err) {
+      toast.error(`Failed to add food: ${err.message}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -71,6 +93,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             >
+              <option value="">Select Category</option>
               <option value="Main">Main</option>
               <option value="Breakfast">Breakfast</option>
               <option value="Side">Side</option>
@@ -198,6 +221,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="text"
               name="ingredients"
+              placeholder="e.g., Dough, Cheese, Tomato"
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -214,6 +238,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
             <input
               type="text"
               name="tags"
+              placeholder="e.g., Italian, Spicy"
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -239,7 +264,7 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
               disabled={isSubmitting}
               className="px-4 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800 disabled:opacity-50"
             >
-              {isSubmitting ? "Adding..." : "Add Food"}
+              {isSubmitting ? 'Adding...' : 'Add Food'}
             </button>
             <button
               type="button"
