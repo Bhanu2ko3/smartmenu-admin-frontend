@@ -1,21 +1,28 @@
-// components/EditOrderModal.js
-import { useState, useEffect } from "react";
-import { api } from "../lib/api";
+'use client';
+import { useState, useEffect } from 'react';
+import { api } from '../lib/api';
+import { toast } from 'react-toastify';
 
 export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
   const [menuItems, setMenuItems] = useState([]);
   const [formData, setFormData] = useState({
-    tableNumber: "",
+    tableNumber: '',
     items: [],
-    status: "",
+    status: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMenuItems = async () => {
-      const data = api.getMenuItems();
-      setMenuItems(data.filter((item) => item.availability));
+      try {
+        const data = await api.getMenuItems();
+        console.log('Fetched menuItems:', data); // Debug
+        setMenuItems(data.filter((item) => item.availability));
+      } catch (err) {
+        console.error('Error fetching menu items:', err);
+        toast.error('Failed to load menu items');
+      }
     };
     fetchMenuItems();
   }, []);
@@ -23,9 +30,9 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
   useEffect(() => {
     if (order) {
       setFormData({
-        tableNumber: order.tableNumber,
+        tableNumber: order.tableNumber || '',
         items: order.items.map((item) => ({ foodId: item.foodId, quantity: item.quantity })),
-        status: order.status,
+        status: order.status || '',
       });
     }
   }, [order]);
@@ -33,7 +40,7 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
   const handleAddItem = () => {
     setFormData((prev) => ({
       ...prev,
-      items: [...prev.items, { foodId: "", quantity: 1 }],
+      items: [...prev.items, { foodId: '', quantity: 1 }],
     }));
   };
 
@@ -47,7 +54,7 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
   const handleItemChange = (index, field, value) => {
     setFormData((prev) => {
       const newItems = [...prev.items];
-      newItems[index] = { ...newItems[index], [field]: value };
+      newItems[index] = { ...newItems[index], [field]: field === 'quantity' ? Number(value) : value };
       return { ...prev, items: newItems };
     });
   };
@@ -59,42 +66,51 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
     setError(null);
 
     if (!formData.tableNumber || formData.tableNumber < 1) {
-      setError("Please enter a valid table number");
+      setError('Please enter a valid table number');
       setIsSubmitting(false);
       return;
     }
     if (formData.items.some((item) => !item.foodId || item.quantity < 1)) {
-      setError("Please select valid items and quantities");
+      setError('Please select valid items and quantities');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.status) {
+      setError('Please select a valid status');
       setIsSubmitting(false);
       return;
     }
 
     try {
-      if (formData.status === "Cancelled") {
-        const success = api.deleteOrder(order.id);
-        if (success) {
-          onUpdate({ id: order.id, status: "Cancelled" }); // Signal deletion
-          onClose();
-        } else {
-          setError("Failed to delete order");
-        }
+      if (!order._id || !/^[0-9a-fA-F]{24}$/.test(order._id)) {
+        throw new Error('Invalid order ID format');
+      }
+
+      if (formData.status === 'Cancelled') {
+        console.log('Deleting order with _id:', order._id); // Debug
+        await api.deleteOrder(order._id);
+        onUpdate({ _id: order._id, status: 'Cancelled' }); // Signal deletion
+        toast.success('Order cancelled successfully');
+        onClose();
       } else {
         const updatedOrder = {
-          tableNumber: formData.tableNumber,
-          items: formData.items,
+          tableNumber: Number(formData.tableNumber),
+          items: formData.items.map((item) => ({
+            foodId: item.foodId,
+            quantity: Number(item.quantity),
+          })),
           status: formData.status,
         };
-        const result = api.updateOrder(order.id, updatedOrder);
-        if (result) {
-          onUpdate(result);
-          onClose();
-        } else {
-          setError("Failed to update order");
-        }
+        console.log('Updating order with _id:', order._id, 'Data:', updatedOrder); // Debug
+        const result = await api.updateOrder(order._id, updatedOrder);
+        onUpdate({ ...result, _id: result._id });
+        toast.success('Order updated successfully');
+        onClose();
       }
-    } catch (error) {
-      console.error("Error updating order:", error);
-      setError("Failed to update order");
+    } catch (err) {
+      console.error('Error updating order:', err);
+      setError(`Failed to update order: ${err.message}`);
+      toast.error(`Failed to update order: ${err.message}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -104,11 +120,11 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50  flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
       aria-label="Edit order modal"
     >
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4 text-gray-900">Edit Order - {order.id}</h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-900">Edit Order - {order._id}</h2>
         {error && (
           <div className="mb-4 p-4 rounded-md bg-red-100 text-red-700">{error}</div>
         )}
@@ -130,13 +146,13 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
               <div key={index} className="flex gap-2 mb-2">
                 <select
                   value={item.foodId}
-                  onChange={(e) => handleItemChange(index, "foodId", e.target.value)}
+                  onChange={(e) => handleItemChange(index, 'foodId', e.target.value)}
                   required
                   className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
                 >
                   <option value="">Select Item</option>
                   {menuItems.map((menuItem) => (
-                    <option key={menuItem.id} value={menuItem.id}>
+                    <option key={menuItem._id} value={menuItem._id}>
                       {menuItem.name}
                     </option>
                   ))}
@@ -144,10 +160,10 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
                 <input
                   type="number"
                   value={item.quantity}
-                  onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
+                  onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
                   min="1"
                   required
-                  className="mt-1 p-2 border border-gray-300 rounded-md  focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-20 focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
                 />
                 {formData.items.length > 1 && (
                   <button
@@ -188,7 +204,7 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
               disabled={isSubmitting}
               className="bg-blue-900 text-white px-4 py-2 rounded-md hover:bg-blue-800 disabled:bg-blue-600"
             >
-              {isSubmitting ? "Updating..." : "Update Order"}
+              {isSubmitting ? 'Updating...' : 'Update Order'}
             </button>
             <button
               type="button"

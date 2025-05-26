@@ -293,20 +293,69 @@ export const api2 = {
 
 //Actual data fetching API implementation
 
-// lib/api.js
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'; 
+
+
 
 export const api = {
+  async getDashboardData() {
+    const response = await fetch(`${API_URL}/api/dashboard`);
+    if (!response.ok) throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
+    return response.json();
+  },
+  async getOrders() {
+    const response = await fetch(`${API_URL}/api/orders`);
+    if (!response.ok) throw new Error(`Failed to fetch orders: ${response.status} ${response.statusText}`);
+    return response.json();
+  },
+  async getOrderDetails(id) {
+    console.log('Calling getOrderDetails with ID:', id);
+    const response = await fetch(`${API_URL}/api/orders/${id}`);
+    if (!response.ok) throw new Error(`Failed to fetch order details for ID ${id}: ${response.status} ${response.statusText}`);
+    return response.json();
+  },
+  async addOrder(newOrder) {
+    const response = await fetch(`${API_URL}/api/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder),
+    });
+    if (!response.ok) throw new Error(`Failed to add order: ${response.status} ${response.statusText}`);
+    return response.json();
+  },
+  async updateOrder(id, updatedOrder) {
+    console.log('Updating order with ID:', id, 'Data:', updatedOrder); // Debug log
+    try {
+      const response = await fetch(`${API_URL}/api/orders/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedOrder),
+      });
+      if (!response.ok) {
+        const errorText = await response.text(); // Get detailed error message
+        throw new Error(`Failed to update order: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+      return response.json();
+    } catch (err) {
+      console.error('Update error:', err);
+      throw err;
+    }
+  },
+
+
+  // Menu Api
+
+
   async getMenuItems() {
     const response = await fetch(`${API_URL}/api/foods`);
-    if (!response.ok) throw new Error('Failed to fetch menu items');
+    if (!response.ok) throw new Error(`Failed to fetch menu items: ${response.status} ${response.statusText}`);
     return response.json();
   },
 
   async getMenuItemById(id) {
-    console.log('Calling getMenuItemById with ID:', id); 
+    console.log('Calling getMenuItemById with ID:', id);
     const response = await fetch(`${API_URL}/api/foods/${id}`);
-    if (!response.ok) throw new Error(`Failed to fetch food item with ID: ${id}`);
+    if (!response.ok) throw new Error(`Failed to fetch food item with ID ${id}: ${response.status} ${response.statusText}`);
     return response.json();
   },
 
@@ -316,28 +365,42 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newFood),
     });
-    if (!response.ok) throw new Error('Failed to add menu item');
+    if (!response.ok) throw new Error(`Failed to add menu item: ${response.status} ${response.statusText}`);
     return response.json();
   },
 
   async updateMenuItem(id, updatedFood) {
-    const response = await fetch(`${API_URL}/api/foods/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedFood),
-    });
-    if (!response.ok) throw new Error('Failed to update menu item');
-    return response.json();
+    console.log('Updating food item with ID:', id, 'Data:', updatedFood); // Debug log
+    try {
+      const response = await fetch(`${API_URL}/api/foods/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedFood),
+      });
+      if (!response.ok) {
+        const errorText = await response.text(); // Get detailed error message
+        throw new Error(`Failed to update menu item: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+      return response.json();
+    } catch (err) {
+      console.error('Update error:', err);
+      throw err;
+    }
   },
 
   async deleteMenuItem(id) {
     const response = await fetch(`${API_URL}/api/foods/${id}`, {
       method: 'DELETE',
     });
-    if (!response.ok) throw new Error('Failed to delete menu item');
+    if (!response.ok) throw new Error(`Failed to delete menu item: ${response.status} ${response.statusText}`);
     return response.ok;
   },
+
+
+
+
 };
+
 
 
 

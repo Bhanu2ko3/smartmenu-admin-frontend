@@ -1,10 +1,10 @@
-'use client';
-import { useState, useEffect, useCallback } from 'react';
-import { api } from '../lib/api';
-import AddFoodModal from './AddFoodModal';
-import ViewFoodModal from './ViewFoodModal';
-import EditFoodModal from './EditFoodModal';
-import DeleteFoodConfirm from './DeleteFoodConfirm';
+"use client";
+import { useState, useEffect, useCallback } from "react";
+import { api } from "../lib/api";
+import AddFoodModal from "./AddFoodModal";
+import ViewFoodModal from "./ViewFoodModal";
+import EditFoodModal from "./EditFoodModal";
+import DeleteFoodConfirm from "./DeleteFoodConfirm";
 
 export default function MenuItemsTable() {
   const [menuItems, setMenuItems] = useState([]);
@@ -13,13 +13,17 @@ export default function MenuItemsTable() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [selectedFoodId, setSelectedFoodId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [availabilityFilter, setAvailabilityFilter] = useState('All');
-  const [dietaryFilter, setDietaryFilter] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [availabilityFilter, setAvailabilityFilter] = useState("All");
+  const [dietaryFilter, setDietaryFilter] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchMenuItems = async () => {
+    const response = await api.getMenuItems();
+    setMenuItems(response);
+  };
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -28,7 +32,7 @@ export default function MenuItemsTable() {
         setMenuItems(items);
       } catch (err) {
         setError(err.message);
-        console.error('Error fetching menu items:', err);
+        console.error("Error fetching menu items:", err);
       } finally {
         setLoading(false);
       }
@@ -36,16 +40,31 @@ export default function MenuItemsTable() {
     fetchMenuItems();
   }, []);
 
-  const categories = ['All', ...new Set(menuItems.map((item) => item.category))];
-  const dietaryOptions = ['All', ...new Set(menuItems.map((item) => item.dietary))];
+  const categories = [
+    "All",
+    ...new Set(menuItems.map((item) => item.category)),
+  ];
+  const dietaryOptions = [
+    "All",
+    ...new Set(menuItems.map((item) => item.dietary)),
+  ];
 
   const filteredItems = menuItems.filter((item) => {
-    const matchesSearch = searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'All' || item.category === categoryFilter;
+    const matchesSearch =
+      searchTerm === "" ||
+      item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      categoryFilter === "All" || item.category === categoryFilter;
     const matchesAvailability =
-      availabilityFilter === 'All' || (availabilityFilter === 'Available' ? item.availability : !item.availability);
-    const matchesDietary = dietaryFilter === 'All' || item.dietary === dietaryFilter;
-    return matchesSearch && matchesCategory && matchesAvailability && matchesDietary;
+      availabilityFilter === "All" ||
+      (availabilityFilter === "Available"
+        ? item.availability
+        : !item.availability);
+    const matchesDietary =
+      dietaryFilter === "All" || item.dietary === dietaryFilter;
+    return (
+      matchesSearch && matchesCategory && matchesAvailability && matchesDietary
+    );
   });
 
   const handleAddFood = useCallback(async (newFood) => {
@@ -58,51 +77,63 @@ export default function MenuItemsTable() {
         return [...prevItems, addedItem];
       });
       setIsAddModalOpen(false);
+      await fetchMenuItems();
+      setSelectedFoodId(null);
     } catch (err) {
-      console.error('Error adding food:', err);
-      alert('Failed to add food');
+      console.error("Error adding food:", err);
+      alert("Failed to add food");
     }
   }, []);
 
   const handleView = (id) => {
-    setSelectedFoodId(id); // Set the ID for ViewFoodModal
+    setSelectedFoodId(id);
     setIsViewModalOpen(true);
   };
 
   const handleEdit = (id) => {
-    const food = menuItems.find((item) => item.id === id);
-    setSelectedFoodId(food); // Set food object for Edit
+    const food = menuItems.find((item) => item._id === id);
+    setSelectedFoodId(food);
     setIsEditModalOpen(true);
   };
+
 
   const handleUpdateFood = async (id, updatedFood) => {
     try {
       const updatedItem = await api.updateMenuItem(id, updatedFood);
-      setMenuItems((prevItems) => prevItems.map((item) => (item.id === id ? updatedItem : item)));
+      setMenuItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === id ? updatedItem : item
+        )
+      );
       setIsEditModalOpen(false);
+      await fetchMenuItems();
       setSelectedFoodId(null);
+
     } catch (err) {
-      console.error('Error updating food:', err);
-      alert('Failed to update food');
+      console.error("Error updating food:", err);
+      alert("Failed to update food");
     }
   };
 
   const handleDelete = (id) => {
-    const food = menuItems.find((item) => item.id === id);
-    setSelectedFoodId(food); // Set food object for Delete
+    const food = menuItems.find((item) => item._id === id);
+    setSelectedFoodId(food);
     setIsDeleteConfirmOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     if (selectedFoodId) {
       try {
-        await api.deleteMenuItem(selectedFoodId.id);
-        setMenuItems((prevItems) => prevItems.filter((item) => item.id !== selectedFoodId.id));
+        await api.deleteMenuItem(selectedFoodId._id);
+        setMenuItems((prevItems) =>
+          prevItems.filter((item) => item._id !== selectedFoodId._id)
+        );
         setIsDeleteConfirmOpen(false);
+        await fetchMenuItems();
         setSelectedFoodId(null);
       } catch (err) {
-        console.error('Error deleting food:', err);
-        alert('Failed to delete food');
+        console.error("Error deleting food:", err);
+        alert("Failed to delete food");
       }
     }
   };
@@ -135,7 +166,7 @@ export default function MenuItemsTable() {
       <ViewFoodModal
         isOpen={isViewModalOpen}
         onClose={() => setIsViewModalOpen(false)}
-        foodId={selectedFoodId} // Pass ID
+        foodId={selectedFoodId}
         menuItems={menuItems} // Pass menuItems for caching
       />
       <EditFoodModal
@@ -186,23 +217,37 @@ export default function MenuItemsTable() {
       <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">ID</th>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">Name</th>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">Category</th>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">Price (LKR)</th>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">Availability</th>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">Rating</th>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">Prep Time (min)</th>
-            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">Actions</th>
+            {/* <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">ID</th> */}
+            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">
+              Name
+            </th>
+            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">
+              Category
+            </th>
+            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">
+              Price (LKR)
+            </th>
+            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">
+              Availability
+            </th>
+            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">
+              Rating
+            </th>
+            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">
+              Prep Time (min)
+            </th>
+            <th className="bg-gray-100 text-gray-900 font-semibold p-3 text-left">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
           {filteredItems.map((item) => (
             <tr key={item.id} className="border-b border-gray-200">
-              <td className="p-3 text-gray-750">{item.id}</td>
+              {/* <td className="p-3 text-gray-750">{item.id}</td> */}
               <td className="p-3 text-gray-750">{item.name}</td>
               <td className="p-3 text-gray-750">{item.category}</td>
-              <td className="p-3 text-gray-750">{item.price.toLocaleString()}</td>
+              <td className="p-3 text-gray-750">{item.price}</td>
               <td className="p-3">
                 <span
                   className={`inline-block px-2 py-1 rounded ${item.availability
@@ -213,24 +258,24 @@ export default function MenuItemsTable() {
                   {item.availability ? "Available" : "Unavailable"}
                 </span>
               </td>
-              <td className="p-3 text-gray-750">{item.rating.toFixed(1)}</td>
+              <td className="p-3 text-gray-750">{item.rating}</td>
               <td className="p-3 text-gray-750">{item.preparationTime}</td>
               <td className="p-3 flex gap-2">
                 <button
                   className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
-                  onClick={() => handleView(item.id)}
+                  onClick={() => handleView(item._id)}
                 >
                   View
                 </button>
                 <button
                   className="bg-green-200 text-green-700 px-4 py-2 rounded-md hover:bg-green-400"
-                  onClick={() => handleEdit(item.id)}
+                  onClick={() => handleEdit(item._id)}
                 >
                   Edit
                 </button>
                 <button
                   className="bg-red-300 text-red-700 px-2 py-1 rounded-md hover:bg-red-400"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => handleDelete(item._id)}
                 >
                   Delete
                 </button>

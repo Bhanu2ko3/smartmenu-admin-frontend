@@ -1,7 +1,7 @@
-import { api } from "../lib/api";
+import { api, api2 } from "../lib/api";
 
 export default function PopularItems() {
-  const { popularItems } = api.getDashboardData();
+  const { popularItems } = api2.getDashboardData();
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
