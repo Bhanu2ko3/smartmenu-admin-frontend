@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { api } from "../lib/api";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Settings() {
   const [settings, setSettings] = useState({
@@ -41,7 +42,7 @@ export default function Settings() {
       };
       const result = api.updateSettings(updatedSettings);
       setSettings(result);
-      setMessage({ type: "success", text: "Settings updated successfully!" });
+      toast.success("Settings updated successfully!");
     } catch (error) {
       setMessage({ type: "error", text: "Failed to update settings. Please try again." });
     } finally {
@@ -152,6 +153,7 @@ export default function Settings() {
             </button>
           </div>
         </form>
+        <ToastContainer position="top-right" autoClose={7000} />
       </div>
     </DashboardLayout>
   );

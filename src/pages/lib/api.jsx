@@ -296,33 +296,93 @@ export const api2 = {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'; 
 
 
+// Temporary mock for development
+
 
 export const api = {
+  
   async getDashboardData() {
-    const response = await fetch(`${API_URL}/api/dashboard`);
-    if (!response.ok) throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
-    return response.json();
+
+
+    
+    return {
+      menuItemsCount: 50,
+      ordersSummary: {
+        total: 150,
+        pending: 20,
+        preparing: 30,
+        completed: 100,
+      },
+      mostSoldItems: [
+        { foodId: '1', name: 'Chicken Biryani', quantitySold: 75 },
+        { foodId: '2', name: 'Margherita Pizza', quantitySold: 60 },
+        { foodId: '3', name: 'Fish Curry', quantitySold: 45 },
+        { foodId: '4', name: 'Fried Rice', quantitySold: 30 },
+        { foodId: '5', name: 'Chocolate Cake', quantitySold: 25 },
+      ],
+      totalSales: 1250000,
+    };
+  
+    // try {
+    //   // Simulate fetching data from /api/dashboard
+    //   const response = await fetch(`${API_URL}/api/dashboard`);
+    //   if (!response.ok) {
+    //     throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
+    //   }
+    //   const data = await response.json();
+    //   return {
+    //     menuItemsCount: data.menuItemsCount || 0,
+    //     ordersSummary: {
+    //       total: data.ordersSummary?.total || 0,
+    //       pending: data.ordersSummary?.pending || 0,
+    //       preparing: data.ordersSummary?.preparing || 0,
+    //       completed: data.ordersSummary?.completed || 0,
+    //     },
+    //     mostSoldItems: data.mostSoldItems || [],
+    //     totalSales: data.totalSales || 0,
+    //   };
+    // } catch (error) {
+    //   console.error('API Error:', error);
+    //   throw error;
+    // }
   },
+
+ //orders
+
   async getOrders() {
     const response = await fetch(`${API_URL}/api/orders`);
     if (!response.ok) throw new Error(`Failed to fetch orders: ${response.status} ${response.statusText}`);
-    return response.json();
+    const data = await response.json();
+    return data.map(order => ({ ...order, _id: order._id }));
   },
-  async getOrderDetails(id) {
-    console.log('Calling getOrderDetails with ID:', id);
-    const response = await fetch(`${API_URL}/api/orders/${id}`);
-    if (!response.ok) throw new Error(`Failed to fetch order details for ID ${id}: ${response.status} ${response.statusText}`);
-    return response.json();
+
+  async getOrderById(_id) {
+    console.log('Fetching order with _id:', _id);
+    const response = await fetch(`${API_URL}/api/orders/${_id}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch order with _id ${_id}: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+    const data = await response.json();
+    return { ...data, _id: data._id };
   },
-  async addOrder(newOrder) {
+
+  
+  async addOrder(order) {
+    console.log('Adding order:', order);
     const response = await fetch(`${API_URL}/api/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newOrder),
+      body: JSON.stringify(order),
     });
-    if (!response.ok) throw new Error(`Failed to add order: ${response.status} ${response.statusText}`);
-    return response.json();
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to add order: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+    const data = await response.json();
+    return { ...data, _id: data._id };
   },
+
   async updateOrder(id, updatedOrder) {
     console.log('Updating order with ID:', id, 'Data:', updatedOrder); // Debug log
     try {
@@ -340,6 +400,19 @@ export const api = {
       console.error('Update error:', err);
       throw err;
     }
+  },
+
+
+  async deleteOrder(_id) {
+    console.log('Deleting order with _id:', _id);
+    const response = await fetch(`${API_URL}/api/orders/${_id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to delete order: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+    return true;
   },
 
 
@@ -397,6 +470,18 @@ export const api = {
   },
 
 
+  // Settings API
+  getSettings() {
+    return settings;
+  },
+  updateSettings(newSettings) {
+    settings = {
+      ...settings,
+      ...newSettings,
+      taxRate: Number(newSettings.taxRate) || 0,
+    };
+    return settings;
+  },
 
 
 };

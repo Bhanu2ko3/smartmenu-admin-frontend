@@ -89,7 +89,7 @@ export default function EditOrderModal({ isOpen, onClose, order, onUpdate }) {
       if (formData.status === 'Cancelled') {
         console.log('Deleting order with _id:', order._id); // Debug
         await api.deleteOrder(order._id);
-        onUpdate({ _id: order._id, status: 'Cancelled' }); // Signal deletion
+        onUpdate({ _id: order._id, status: ' ' }); // Signal deletion
         toast.success('Order cancelled successfully');
         onClose();
       } else {

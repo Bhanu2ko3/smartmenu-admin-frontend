@@ -5,6 +5,7 @@ import AddFoodModal from "./AddFoodModal";
 import ViewFoodModal from "./ViewFoodModal";
 import EditFoodModal from "./EditFoodModal";
 import DeleteFoodConfirm from "./DeleteFoodConfirm";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function MenuItemsTable() {
   const [menuItems, setMenuItems] = useState([]);
@@ -284,6 +285,7 @@ export default function MenuItemsTable() {
           ))}
         </tbody>
       </table>
+      <ToastContainer position="top-right" autoClose={7000} />
     </div>
   );
 }

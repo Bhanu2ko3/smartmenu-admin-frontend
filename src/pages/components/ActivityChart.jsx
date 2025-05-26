@@ -1,127 +1,169 @@
-import { useState, useEffect } from "react";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { api } from "../lib/api";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+import { useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default function ActivityChart() {
-  const [dailySales, setDailySales] = useState([]);
-  const [weeklySales, setWeeklySales] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const chartRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  // Fetch data from API
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const { dailySales, weeklySales } = await api.getDashboardData();
-        setDailySales(dailySales || [0, 0, 0, 0, 0, 0, 0]); // Fallback to zeros if undefined
-        setWeeklySales(weeklySales || [0, 0, 0, 0]); // Fallback to zeros if undefined
-      } catch (err) {
-        setError("Failed to load sales data. Please try again later.");
-      } finally {
-        setLoading(false);
+    if (chartRef.current) {
+      chartRef.current.destroy();
+    }
+
+    const ctx = canvasRef.current.getContext('2d');
+
+    // Register plugin
+    Chart.register(ChartDataLabels);
+
+    chartRef.current = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Pending', 'Preparing', 'Completed'],
+        datasets: [
+          {
+            label: 'Orders by Status',
+            data: [20, 30, 100], // Replace with dynamic data
+            backgroundColor: [
+              'rgba(255, 159, 64, 0.8)', // iOS-like orange
+              'rgba(0, 122, 255, 0.8)', // iOS system blue
+              'rgba(52, 199, 89, 0.8)', // iOS system green
+            ],
+            borderColor: [
+              'rgba(255, 159, 64, 1)',
+              'rgba(0, 122, 255, 1)',
+              'rgba(52, 199, 89, 1)',
+            ],
+            borderWidth: 1,
+            borderRadius: 10,
+            borderSkipped: false,
+            barThickness: 40,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: 'Order Status Overview',
+            color: '#1C2526',
+            font: {
+              size: 16,
+              weight: '600',
+              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+            },
+            padding: { top: 0, bottom: 12 },
+          },
+          tooltip: {
+            backgroundColor: 'rgba(28, 37, 38, 0.9)',
+            titleFont: {
+              size: 13,
+              weight: '500',
+              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+            },
+            bodyFont: {
+              size: 12,
+              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+            },
+            padding: 10,
+            cornerRadius: 10,
+            displayColors: false,
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#1C2526',
+            font: {
+              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+              weight: '600',
+              size: 11,
+            },
+            formatter: (value) => `${value} orders`,
+            padding: {
+              top: 4,
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)',
+              drawBorder: false,
+            },
+            ticks: {
+              stepSize: 25,
+              color: 'rgba(28, 37, 38, 0.7)',
+              font: {
+                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+                size: 11,
+              },
+              padding: 6,
+            },
+            title: {
+              display: true,
+              text: 'Number of Orders',
+              color: 'rgba(28, 37, 38, 0.7)',
+              font: {
+                size: 12,
+                weight: '500',
+                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+              },
+              padding: { top: 0, bottom: 8 },
+            },
+          },
+          x: {
+            grid: {
+              display: false,
+              drawBorder: false,
+            },
+            ticks: {
+              color: 'rgba(28, 37, 38, 0.7)',
+              font: {
+                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+                size: 12,
+                weight: '500',
+              },
+            },
+            title: {
+              display: true,
+              text: 'Order Status',
+              color: 'rgba(28, 37, 38, 0.7)',
+              font: {
+                size: 12,
+                weight: '500',
+                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+              },
+              padding: { top: 8, bottom: 0 },
+            },
+          },
+        },
+        layout: {
+          padding: {
+            top: 8,
+            right: 16,
+            bottom: 16,
+            left: 16,
+          },
+        },
+      },
+    });
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
       }
     };
-    fetchData();
   }, []);
 
-  // Daily Sales Data
-  const dailyData = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
-      {
-        label: "Daily Sales (LKR)",
-        data: dailySales,
-        borderColor: "#1e3a8a",
-        backgroundColor: "rgba(30, 58, 138, 0.2)",
-        fill: true,
-        tension: 0.4, // Smooth line
-      },
-    ],
-  };
-
-  // Weekly Sales Data
-  const weeklyData = {
-    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-    datasets: [
-      {
-        label: "Weekly Sales (LKR)",
-        data: weeklySales,
-        borderColor: "#f59e0b",
-        backgroundColor: "rgba(245, 158, 11, 0.2)",
-        fill: true,
-        tension: 0.4, // Smooth line
-      },
-    ],
-  };
-
-  // Chart Options
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false, // Allow chart to fill container
-    plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Sales Activity" },
-      tooltip: {
-        callbacks: {
-          label: (context) => `LKR ${context.parsed.y.toLocaleString("si-LK", { currency: "LKR" })}`,
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: (value) => `LKR ${value.toLocaleString("si-LK", { currency: "LKR" })}`,
-        },
-      },
-    },
-  };
-
-  // Conditional Rendering
-  if (loading) {
-    return (
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Sales Activity</h2>
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Sales Activity</h2>
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 ">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Sales Activity</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="h-80">
-          <h3 className="text-sm text-gray-500 mb-2">Daily Sales</h3>
-          <Line data={dailyData} options={options} />
-        </div>
-        <div className="h-80">
-          <h3 className="text-sm text-gray-500 mb-2">Weekly Sales</h3>
-          <Line data={weeklyData} options={options} />
-        </div>
-      </div>
+    <div className="bg-white/80 rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-out backdrop-blur-md border border-white/20 w-full h-[360px]">
+      <canvas ref={canvasRef}></canvas>
     </div>
   );
 }
