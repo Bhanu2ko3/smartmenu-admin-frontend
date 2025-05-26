@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // For App Router
@@ -42,13 +42,17 @@ export default function Login() {
       <Toaster position="top-right" />
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Welcome Back
+          </h1>
           <p className="text-gray-600">Sign in to your admin dashboard</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <div className="relative">
               <FiMail className="absolute top-3 left-3 text-gray-400" />
               <input
@@ -63,7 +67,9 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <div className="relative">
               <FiLock className="absolute top-3 left-3 text-gray-400" />
               <input
@@ -80,10 +86,16 @@ export default function Login() {
 
           <div className="flex items-center justify-between text-sm text-gray-600">
             <label className="flex items-center">
-              <input type="checkbox" className="mr-2 rounded text-blue-600 focus:ring-0" />
+              <input
+                type="checkbox"
+                className="mr-2 rounded text-blue-600 focus:ring-0"
+              />
               Remember me
             </label>
-            <Link href="/forgot-password" className="text-blue-600 hover:underline">
+            <Link
+              href="/forgot-password"
+              className="text-blue-600 hover:underline"
+            >
               Forgot password?
             </Link>
           </div>
@@ -92,13 +104,20 @@ export default function Login() {
             type="submit"
             disabled={isLoading}
             className={`w-full flex justify-center items-center py-3 px-4 rounded-lg text-white font-medium transition-colors ${
-              isLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+              isLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
             {isLoading ? (
               <>
                 <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -117,7 +136,7 @@ export default function Login() {
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="text-blue-600 hover:underline">
             Sign up
           </Link>
