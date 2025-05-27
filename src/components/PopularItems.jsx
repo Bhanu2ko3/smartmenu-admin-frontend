@@ -14,13 +14,18 @@ export default function PopularItems({ items }) {
               className="flex items-center justify-between bg-white/50 hover:bg-white/70 transition-all duration-200 ease-out rounded-xl p-3 border border-gray-100/50 backdrop-blur-sm"
             >
               <div>
-                <p className="text-base font-medium text-gray-900">{item.name}</p>
+                <p className="text-base font-medium text-gray-900">
+                  {item.name}
+                </p>
                 <p className="text-xs text-gray-500/90">ID: {item.foodId}</p>
               </div>
               <div className="text-right">
                 <p className="text-lg font-semibold text-indigo-600">
                   {item.quantitySold}
-                  <span className="text-xs font-medium text-gray-500/90"> sold</span>
+                  <span className="text-xs font-medium text-gray-500/90">
+                    {" "}
+                    sold
+                  </span>
                 </p>
               </div>
             </li>

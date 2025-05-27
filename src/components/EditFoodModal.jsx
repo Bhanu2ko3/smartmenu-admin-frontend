@@ -1,6 +1,6 @@
-'use client';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
+"use client";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,70 +14,96 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
 
     const formData = new FormData(e.target);
     const updatedFood = {
-      name: formData.get('name')?.trim(),
-      description: formData.get('description')?.trim() || null,
-      category: formData.get('category'),
-      price: Number(formData.get('price')),
-      rating: Number(formData.get('rating')) || 0,
-      origin: formData.get('origin')?.trim() || null,
-      preparationTime: Number(formData.get('preparationTime')) || null,
-      availability: formData.get('availability') === 'true',
-      dietary: formData.get('dietary'),
-      calories: Number(formData.get('calories')) || null,
-      protein: Number(formData.get('protein')) || null,
-      carbs: Number(formData.get('carbs')) || null,
-      fats: Number(formData.get('fats')) || null,
-      flavor: formData.get('flavor')?.trim() || null,
-      spiceLevel: Number(formData.get('spiceLevel')) || null,
-      ingredients: formData.get('ingredients')?.trim().split(',').map(item => item.trim()).filter(Boolean) || [],
-      servingSize: formData.get('servingSize')?.trim() || null,
-      tags: formData.get('tags')?.trim().split(',').map(item => item.trim()).filter(Boolean) || [],
-      imageUrl: formData.get('imageUrl')?.trim() || null,
-      model3DUrl: formData.get('model3DUrl')?.trim() || null,
+      name: formData.get("name")?.trim(),
+      description: formData.get("description")?.trim() || null,
+      category: formData.get("category"),
+      price: Number(formData.get("price")),
+      rating: Number(formData.get("rating")) || 0,
+      origin: formData.get("origin")?.trim() || null,
+      preparationTime: Number(formData.get("preparationTime")) || null,
+      availability: formData.get("availability") === "true",
+      dietary: formData.get("dietary"),
+      calories: Number(formData.get("calories")) || null,
+      protein: Number(formData.get("protein")) || null,
+      carbs: Number(formData.get("carbs")) || null,
+      fats: Number(formData.get("fats")) || null,
+      flavor: formData.get("flavor")?.trim() || null,
+      spiceLevel: Number(formData.get("spiceLevel")) || null,
+      ingredients:
+        formData
+          .get("ingredients")
+          ?.trim()
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean) || [],
+      servingSize: formData.get("servingSize")?.trim() || null,
+      tags:
+        formData
+          .get("tags")
+          ?.trim()
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean) || [],
+      imageUrl: formData.get("imageUrl")?.trim() || null,
+      model3DUrl: formData.get("model3DUrl")?.trim() || null,
     };
 
     // Enhanced validation
     if (!updatedFood.name) {
-      toast.error('Name is required');
+      toast.error("Name is required");
       setIsSubmitting(false);
       return;
     }
-    if (!updatedFood.category || !['Main', 'Breakfast', 'Side', 'Dessert'].includes(updatedFood.category)) {
-      toast.error('Please select a valid category');
+    if (
+      !updatedFood.category ||
+      !["Main", "Breakfast", "Side", "Dessert"].includes(updatedFood.category)
+    ) {
+      toast.error("Please select a valid category");
       setIsSubmitting(false);
       return;
     }
     if (!updatedFood.price || updatedFood.price <= 0) {
-      toast.error('Price must be greater than 0');
+      toast.error("Price must be greater than 0");
       setIsSubmitting(false);
       return;
     }
-    if (!updatedFood.dietary || !['Non-Vegetarian', 'Vegetarian', 'Vegan'].includes(updatedFood.dietary)) {
-      toast.error('Please select a valid dietary option');
+    if (
+      !updatedFood.dietary ||
+      !["Non-Vegetarian", "Vegetarian", "Vegan"].includes(updatedFood.dietary)
+    ) {
+      toast.error("Please select a valid dietary option");
       setIsSubmitting(false);
       return;
     }
     if (updatedFood.rating < 0 || updatedFood.rating > 5) {
-      toast.error('Rating must be between 0 and 5');
+      toast.error("Rating must be between 0 and 5");
       setIsSubmitting(false);
       return;
     }
-    if (updatedFood.spiceLevel && (updatedFood.spiceLevel < 0 || updatedFood.spiceLevel > 5)) {
-      toast.error('Spice level must be between 0 and 5');
+    if (
+      updatedFood.spiceLevel &&
+      (updatedFood.spiceLevel < 0 || updatedFood.spiceLevel > 5)
+    ) {
+      toast.error("Spice level must be between 0 and 5");
       setIsSubmitting(false);
       return;
     }
 
     try {
       if (!food._id || !/^[0-9a-fA-F]{24}$/.test(food._id)) {
-        throw new Error('Invalid food ID format');
+        throw new Error("Invalid food ID format");
       }
-      console.log('Submitting update for food _id:', food._id, 'Data:', updatedFood); // Debug log
+      console.log(
+        "Submitting update for food _id:",
+        food._id,
+        "Data:",
+        updatedFood
+      ); // Debug log
       await onUpdate(food._id, updatedFood);
-      toast.success('Food item updated successfully');
+      toast.success("Food item updated successfully");
       onClose();
     } catch (err) {
-      console.error('Update failed:', err);
+      console.error("Update failed:", err);
       toast.error(`Failed to update food: ${err.message}`);
     } finally {
       setIsSubmitting(false);
@@ -94,7 +120,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="text"
               name="name"
-              defaultValue={food.name || ''}
+              defaultValue={food.name || ""}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
@@ -104,7 +130,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <textarea
               name="description"
               rows="3"
-              defaultValue={food.description || ''}
+              defaultValue={food.description || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -112,7 +138,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             Category
             <select
               name="category"
-              defaultValue={food.category || ''}
+              defaultValue={food.category || ""}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             >
@@ -152,7 +178,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="text"
               name="origin"
-              defaultValue={food.origin || ''}
+              defaultValue={food.origin || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -162,7 +188,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
               type="number"
               name="preparationTime"
               min="0"
-              defaultValue={food.preparationTime || ''}
+              defaultValue={food.preparationTime || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -170,7 +196,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             Availability
             <select
               name="availability"
-              defaultValue={food.availability?.toString() || 'true'}
+              defaultValue={food.availability?.toString() || "true"}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             >
@@ -182,7 +208,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             Dietary
             <select
               name="dietary"
-              defaultValue={food.dietary || 'Non-Vegetarian'}
+              defaultValue={food.dietary || "Non-Vegetarian"}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             >
@@ -197,7 +223,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
               type="number"
               name="calories"
               min="0"
-              defaultValue={food.calories || ''}
+              defaultValue={food.calories || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -207,7 +233,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
               type="number"
               name="protein"
               min="0"
-              defaultValue={food.protein || ''}
+              defaultValue={food.protein || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -217,7 +243,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
               type="number"
               name="carbs"
               min="0"
-              defaultValue={food.carbs || ''}
+              defaultValue={food.carbs || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -227,7 +253,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
               type="number"
               name="fats"
               min="0"
-              defaultValue={food.fats || ''}
+              defaultValue={food.fats || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -236,7 +262,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="text"
               name="flavor"
-              defaultValue={food.flavor || ''}
+              defaultValue={food.flavor || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -247,7 +273,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
               name="spiceLevel"
               min="0"
               max="5"
-              defaultValue={food.spiceLevel || ''}
+              defaultValue={food.spiceLevel || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -256,7 +282,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="text"
               name="ingredients"
-              defaultValue={food.ingredients?.join(', ') || ''}
+              defaultValue={food.ingredients?.join(", ") || ""}
               placeholder="e.g., Dough, Cheese, Tomato"
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
@@ -266,7 +292,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="text"
               name="servingSize"
-              defaultValue={food.servingSize || ''}
+              defaultValue={food.servingSize || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -275,7 +301,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="text"
               name="tags"
-              defaultValue={food.tags?.join(', ') || ''}
+              defaultValue={food.tags?.join(", ") || ""}
               placeholder="e.g., Italian, Spicy"
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
@@ -285,7 +311,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="url"
               name="imageUrl"
-              defaultValue={food.imageUrl || ''}
+              defaultValue={food.imageUrl || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -294,7 +320,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
             <input
               type="url"
               name="model3DUrl"
-              defaultValue={food.model3DUrl || ''}
+              defaultValue={food.model3DUrl || ""}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </label>
@@ -304,7 +330,7 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
               disabled={isSubmitting}
               className="px-4 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800 disabled:opacity-50"
             >
-              {isSubmitting ? 'Updating...' : 'Update Food'}
+              {isSubmitting ? "Updating..." : "Update Food"}
             </button>
             <button
               type="button"

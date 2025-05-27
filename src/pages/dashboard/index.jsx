@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import DashboardLayout from "../components/DashboardLayout";
-import MetricsCard from "../components/MetricsCard";
-import PopularItems from "../components/PopularItems";
-import ActivityChart from "../components/ActivityChart";
+import DashboardLayout from "../../components/DashboardLayout";
+import MetricsCard from "../../components/MetricsCard";
+import PopularItems from "../../components/PopularItems";
+import ActivityChart from "../../components/ActivityChart";
 import { api } from "../../lib/api";
 import { toast } from "react-toastify";
 

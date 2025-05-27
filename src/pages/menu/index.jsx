@@ -1,5 +1,5 @@
-import DashboardLayout from "../components/DashboardLayout";
-import MenuItemsTable from "../components/MenuItemsTable";
+import DashboardLayout from "../../components/DashboardLayout";
+import MenuItemsTable from "../../components/MenuItemsTable";
 
 export default function MenuItems() {
   return (

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { api } from "../../lib/api";
+import { api } from "../lib/api";
 import { toast, ToastContainer } from "react-toastify";
 import ViewOrderModal from "./ViewOrderModal";
 import AddOrderModal from "./AddOrderModal";
@@ -86,8 +86,11 @@ export default function OrdersTable() {
   };
 
   const handleAddOrder = (newOrder) => {
-  setOrders(prev => [...prev, { ...newOrder, createdAt: new Date().toISOString() }]);
-};
+    setOrders((prev) => [
+      ...prev,
+      { ...newOrder, createdAt: new Date().toISOString() },
+    ]);
+  };
 
   const handleUpdateOrder = (updatedOrder) => {
     if (updatedOrder.status === "Cancelled") {

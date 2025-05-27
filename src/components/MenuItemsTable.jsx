@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { api } from "../../lib/api";
+import { api } from "../lib/api";
 import AddFoodModal from "./AddFoodModal";
 import ViewFoodModal from "./ViewFoodModal";
 import EditFoodModal from "./EditFoodModal";
@@ -97,19 +97,15 @@ export default function MenuItemsTable() {
     setIsEditModalOpen(true);
   };
 
-
   const handleUpdateFood = async (id, updatedFood) => {
     try {
       const updatedItem = await api.updateMenuItem(id, updatedFood);
       setMenuItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === id ? updatedItem : item
-        )
+        prevItems.map((item) => (item.id === id ? updatedItem : item))
       );
       setIsEditModalOpen(false);
       await fetchMenuItems();
       setSelectedFoodId(null);
-
     } catch (err) {
       console.error("Error updating food:", err);
       alert("Failed to update food");
@@ -251,10 +247,11 @@ export default function MenuItemsTable() {
               <td className="p-3 text-gray-750">{item.price}</td>
               <td className="p-3">
                 <span
-                  className={`inline-block px-2 py-1 rounded ${item.availability
-                    ? "bg-green-100 text-green-600"
-                    : "bg-yellow-100 text-yellow-600"
-                    }`}
+                  className={`inline-block px-2 py-1 rounded ${
+                    item.availability
+                      ? "bg-green-100 text-green-600"
+                      : "bg-yellow-100 text-yellow-600"
+                  }`}
                 >
                   {item.availability ? "Available" : "Unavailable"}
                 </span>

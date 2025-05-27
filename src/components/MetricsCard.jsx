@@ -6,14 +6,14 @@ export default function MetricsCard({ title, value, icon, subtext }) {
           {icon}
         </div>
         <div className="flex-1">
-          <h3 className="text-xs font-medium text-gray-600 uppercase tracking-widest">{title}</h3>
+          <h3 className="text-xs font-medium text-gray-600 uppercase tracking-widest">
+            {title}
+          </h3>
           <p className="text-xl font-semibold text-gray-900 mt-0.5">
-            {typeof value === 'number' ? value.toLocaleString() : value}
+            {typeof value === "number" ? value.toLocaleString() : value}
           </p>
           {subtext && (
-            <p className="text-xs text-gray-500/90 mt-0.5">
-              {subtext}
-            </p>
+            <p className="text-xs text-gray-500/90 mt-0.5">{subtext}</p>
           )}
         </div>
       </div>

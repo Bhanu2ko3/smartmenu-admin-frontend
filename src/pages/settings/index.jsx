@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import DashboardLayout from "../components/DashboardLayout";
+import DashboardLayout from "../../components/DashboardLayout";
 import { api } from "../../lib/api";
 import { toast, ToastContainer } from "react-toastify";
 
