@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // For App Router
-// import { useRouter } from "next/router"; // For Pages Router
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FiMail, FiLock, FiLogIn } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
@@ -23,8 +22,6 @@ export default function Login() {
 
       if (email === validEmail && password === validPassword) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        localStorage.setItem("token", "dummy-jwt-token");
-
         toast.success("Login successful! Redirecting...");
         setTimeout(() => router.push("/dashboard"), 1500);
       } else {
@@ -59,7 +56,7 @@ export default function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 placeholder="admin@smartfood.lk"
                 required
               />
@@ -76,7 +73,7 @@ export default function Login() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 placeholder="••••••••"
                 required
                 minLength={4}

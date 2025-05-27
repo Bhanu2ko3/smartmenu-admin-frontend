@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import DashboardLayout from '../components/DashboardLayout';
-import MetricsCard from '../components/MetricsCard';
-import PopularItems from '../components/PopularItems';
-import ActivityChart from '../components/ActivityChart';
-import { api } from '../../lib/api';
-import { toast } from 'react-toastify';
+import { useState, useEffect } from "react";
+import DashboardLayout from "../components/DashboardLayout";
+import MetricsCard from "../components/MetricsCard";
+import PopularItems from "../components/PopularItems";
+import ActivityChart from "../components/ActivityChart";
+import { api } from "../../lib/api";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState({
@@ -24,8 +24,8 @@ export default function Dashboard() {
         const data = await api.getDashboardData();
         setDashboardData(data);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        toast.error('Failed to fetch dashboard data');
+        console.error("Error fetching dashboard data:", error);
+        toast.error("Failed to fetch dashboard data");
       } finally {
         setLoading(false);
       }
@@ -43,13 +43,11 @@ export default function Dashboard() {
     );
   }
 
-  const { menuItemsCount, ordersSummary, mostSoldItems, totalSales } = dashboardData;
+  const { menuItemsCount, ordersSummary, mostSoldItems, totalSales } =
+    dashboardData;
 
   return (
     <DashboardLayout>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        Dashboard Overview
-      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <MetricsCard
           title="Total Orders"
@@ -92,6 +90,6 @@ export default function Dashboard() {
         <PopularItems items={mostSoldItems} />
         <ActivityChart />
       </div>
-    </DashboardLayout>  
+    </DashboardLayout>
   );
 }

@@ -1,4 +1,3 @@
-// lib/api.js
 let menuItems = [
   {
     id: "FOOD001",
@@ -133,178 +132,15 @@ let orders = [
   },
 ];
 
-export const api2 = {
-  getDashboardData() {
-    return {
-      menuItemsCount: menuItems.length,
-      ordersSummary: { active: 15, completed: 30, total: 45 },
-      popularItems: [
-        { id: 1, name: "Kottu Roti", orders: 150, revenue: 112500 },
-        { id: 2, name: "Fried Rice", orders: 120, revenue: 72000 },
-        { id: 3, name: "String Hoppers", orders: 80, revenue: 32000 },
-      ],
-      dailySales: [25000, 30000, 28000, 32000, 35000, 40000, 38000],
-      weeklySales: [150000, 180000, 170000, 200000],
-    };
-  },
-  getOrders() {
-    // Sort by createdAt, newest first
-    return [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  },
-  getOrderDetails(id) {
-    const order = orders.find((o) => o.id === id);
-    if (!order) return null;
-    let subtotal = 0;
-    const itemDetails = order.items.map((item) => {
-      const menuItem = menuItems.find((m) => m.id === item.foodId);
-      const itemTotal = menuItem ? menuItem.price * item.quantity : 0;
-      subtotal += itemTotal;
-      return {
-        foodId: item.foodId,
-        name: menuItem ? menuItem.name : "Unknown",
-        quantity: item.quantity,
-        price: menuItem ? menuItem.price : 0,
-        itemTotal,
-      };
-    });
-    const tax = subtotal * settings.taxRate;
-    const total = subtotal + tax;
-    return {
-      ...order,
-      itemDetails,
-      subtotal,
-      tax,
-      total,
-    };
-  },
-  addOrder(order) {
-    const newId = `ORD${String(orders.length + 1).padStart(3, "0")}`;
-    if (orders.some((existingOrder) => existingOrder.id === newId)) {
-      return null;
-    }
-    const newOrder = {
-      id: newId,
-      tableNumber: Number(order.tableNumber),
-      items: order.items.map((item) => ({
-        foodId: item.foodId,
-        quantity: Number(item.quantity),
-      })),
-      status: order.status || "Pending",
-      createdAt: new Date().toISOString(),
-    };
-    orders.push(newOrder);
-    return newOrder;
-  },
-  updateOrder(id, updatedOrder) {
-    const index = orders.findIndex((o) => o.id === id);
-    if (index === -1) return null;
-    const newOrder = {
-      id,
-      tableNumber: Number(updatedOrder.tableNumber),
-      items: updatedOrder.items.map((item) => ({
-        foodId: item.foodId,
-        quantity: Number(item.quantity),
-      })),
-      status: updatedOrder.status,
-      createdAt: orders[index].createdAt, // Preserve original creation time
-    };
-    orders[index] = newOrder;
-    return newOrder;
-  },
-  deleteOrder(id) {
-    const index = orders.findIndex((o) => o.id === id);
-    if (index === -1) return false;
-    orders.splice(index, 1);
-    return true;
-  },
-  updateOrderStatus(id, status) {
-    const index = orders.findIndex((o) => o.id === id);
-    if (index === -1) return false;
-    if (status === "Cancelled") {
-      // Delete the order instead of setting status
-      orders.splice(index, 1);
-      return true;
-    }
-    orders[index].status = status;
-    return true;
-  },
-  getMenuItems() {
-    return menuItems;
-  },
-  addMenuItem(item) {
-    const newId = `FOOD${String(menuItems.length + 1).padStart(3, "0")}`;
-    if (menuItems.some((existingItem) => existingItem.id === newId)) {
-      return null;
-    }
-    const newItem = {
-      ...item,
-      id: newId,
-      rating: item.rating || 0,
-      ingredients: item.ingredients ? item.ingredients.split(",").map((i) => i.trim()) : [],
-      tags: item.tags ? item.tags.split(",").map((t) => t.trim()) : [],
-      imageUrl: item.imageUrl || "https://example.com/default.jpg",
-      model3DUrl: item.model3DUrl || "https://example.com/default-3d.glb",
-    };
-    menuItems.push(newItem);
-    return newItem;
-  },
-  updateMenuItem(id, updatedItem) {
-    const index = menuItems.findIndex((item) => item.id === id);
-    if (index === -1) return null;
-    const newItem = {
-      ...updatedItem,
-      id,
-      rating: updatedItem.rating || 0,
-      ingredients: updatedItem.ingredients ? updatedItem.ingredients.split(",").map((i) => i.trim()) : [],
-      tags: updatedItem.tags ? updatedItem.tags.split(",").map((t) => t.trim()) : [],
-      imageUrl: updatedItem.imageUrl || "https://example.com/default.jpg",
-      model3DUrl: updatedItem.model3DUrl || "https://example.com/default-3d.glb",
-    };
-    menuItems[index] = newItem;
-    return newItem;
-  },
-  deleteMenuItem(id) {
-    const index = menuItems.findIndex((item) => item.id === id);
-    if (index === -1) return false;
-    menuItems.splice(index, 1);
-    return true;
-  },
-  getSettings() {
-    return settings;
-  },
-  updateSettings(newSettings) {
-    settings = {
-      ...settings,
-      ...newSettings,
-      taxRate: Number(newSettings.taxRate) || 0,
-    };
-    return settings;
-  },
-};
-
-
-
-
-
-
-
-
-
-
 //Actual data fetching API implementation
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'; 
-
-
-// Temporary mock for development
-
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://smartmenu-backend.up.railway.app";
 
 export const api = {
-  
+  // Dashboard API
+
   async getDashboardData() {
-
-
-    
     return {
       menuItemsCount: 50,
       ordersSummary: {
@@ -314,161 +150,191 @@ export const api = {
         completed: 100,
       },
       mostSoldItems: [
-        { foodId: '1', name: 'Chicken Biryani', quantitySold: 75 },
-        { foodId: '2', name: 'Margherita Pizza', quantitySold: 60 },
-        { foodId: '3', name: 'Fish Curry', quantitySold: 45 },
-        { foodId: '4', name: 'Fried Rice', quantitySold: 30 },
-        { foodId: '5', name: 'Chocolate Cake', quantitySold: 25 },
+        { foodId: "1", name: "Chicken Biryani", quantitySold: 75 },
+        { foodId: "2", name: "Margherita Pizza", quantitySold: 60 },
+        { foodId: "3", name: "Fish Curry", quantitySold: 45 },
+        { foodId: "4", name: "Fried Rice", quantitySold: 30 },
+        { foodId: "5", name: "Chocolate Cake", quantitySold: 25 },
       ],
       totalSales: 1250000,
     };
-  
-    // try {
-    //   // Simulate fetching data from /api/dashboard
-    //   const response = await fetch(`${API_URL}/api/dashboard`);
-    //   if (!response.ok) {
-    //     throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
-    //   }
-    //   const data = await response.json();
-    //   return {
-    //     menuItemsCount: data.menuItemsCount || 0,
-    //     ordersSummary: {
-    //       total: data.ordersSummary?.total || 0,
-    //       pending: data.ordersSummary?.pending || 0,
-    //       preparing: data.ordersSummary?.preparing || 0,
-    //       completed: data.ordersSummary?.completed || 0,
-    //     },
-    //     mostSoldItems: data.mostSoldItems || [],
-    //     totalSales: data.totalSales || 0,
-    //   };
-    // } catch (error) {
-    //   console.error('API Error:', error);
-    //   throw error;
-    // }
+
+    /*try {
+      // Simulate fetching data from /api/dashboard
+      const response = await fetch(`${API_URL}/api/dashboard`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      return {
+        menuItemsCount: data.menuItemsCount || 0,
+        ordersSummary: {
+          total: data.ordersSummary?.total || 0,
+          pending: data.ordersSummary?.pending || 0,
+          preparing: data.ordersSummary?.preparing || 0,
+          completed: data.ordersSummary?.completed || 0,
+        },
+        mostSoldItems: data.mostSoldItems || [],
+        totalSales: data.totalSales || 0,
+      };
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }*/
   },
 
- //orders
+  //orders api
 
+  // get all orders
   async getOrders() {
     const response = await fetch(`${API_URL}/api/orders`);
-    if (!response.ok) throw new Error(`Failed to fetch orders: ${response.status} ${response.statusText}`);
+    if (!response.ok)
+      throw new Error(
+        `Failed to fetch orders: ${response.status} ${response.statusText}`
+      );
     const data = await response.json();
-    return data.map(order => ({ ...order, _id: order._id }));
+    return data.map((order) => ({ ...order, _id: order._id }));
   },
 
+  // get order by id
   async getOrderById(_id) {
-    console.log('Fetching order with _id:', _id);
+    console.log("Fetching order with _id:", _id);
     const response = await fetch(`${API_URL}/api/orders/${_id}`);
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to fetch order with _id ${_id}: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `Failed to fetch order with _id ${_id}: ${response.status} ${response.statusText} - ${errorText}`
+      );
     }
     const data = await response.json();
     return { ...data, _id: data._id };
   },
 
-  
+  // add (create) a new order
   async addOrder(order) {
-    console.log('Adding order:', order);
+    console.log("Adding order:", order);
     const response = await fetch(`${API_URL}/api/orders`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(order),
     });
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to add order: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `Failed to add order: ${response.status} ${response.statusText} - ${errorText}`
+      );
     }
     const data = await response.json();
     return { ...data, _id: data._id };
   },
 
+  // update an existing order
   async updateOrder(id, updatedOrder) {
-    console.log('Updating order with ID:', id, 'Data:', updatedOrder); // Debug log
+    console.log("Updating order with ID:", id, "Data:", updatedOrder); // Debug log
     try {
       const response = await fetch(`${API_URL}/api/orders/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedOrder),
       });
       if (!response.ok) {
         const errorText = await response.text(); // Get detailed error message
-        throw new Error(`Failed to update order: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(
+          `Failed to update order: ${response.status} ${response.statusText} - ${errorText}`
+        );
       }
       return response.json();
     } catch (err) {
-      console.error('Update error:', err);
+      console.error("Update error:", err);
       throw err;
     }
   },
 
-
+  // delete an order
   async deleteOrder(_id) {
-    console.log('Deleting order with _id:', _id);
+    console.log("Deleting order with _id:", _id);
     const response = await fetch(`${API_URL}/api/orders/${_id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to delete order: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `Failed to delete order: ${response.status} ${response.statusText} - ${errorText}`
+      );
     }
     return true;
   },
 
-
   // Menu Api
 
-
+  // get all menu items
   async getMenuItems() {
     const response = await fetch(`${API_URL}/api/foods`);
-    if (!response.ok) throw new Error(`Failed to fetch menu items: ${response.status} ${response.statusText}`);
+    if (!response.ok)
+      throw new Error(
+        `Failed to fetch menu items: ${response.status} ${response.statusText}`
+      );
     return response.json();
   },
 
+  // get menu item by id
   async getMenuItemById(id) {
-    console.log('Calling getMenuItemById with ID:', id);
+    console.log("Calling getMenuItemById with ID:", id);
     const response = await fetch(`${API_URL}/api/foods/${id}`);
-    if (!response.ok) throw new Error(`Failed to fetch food item with ID ${id}: ${response.status} ${response.statusText}`);
+    if (!response.ok)
+      throw new Error(
+        `Failed to fetch food item with ID ${id}: ${response.status} ${response.statusText}`
+      );
     return response.json();
   },
 
+  // add a new menu item
   async addMenuItem(newFood) {
     const response = await fetch(`${API_URL}/api/foods`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newFood),
     });
-    if (!response.ok) throw new Error(`Failed to add menu item: ${response.status} ${response.statusText}`);
+    if (!response.ok)
+      throw new Error(
+        `Failed to add menu item: ${response.status} ${response.statusText}`
+      );
     return response.json();
   },
 
+  // update an existing menu item
   async updateMenuItem(id, updatedFood) {
-    console.log('Updating food item with ID:', id, 'Data:', updatedFood); // Debug log
+    console.log("Updating food item with ID:", id, "Data:", updatedFood); // Debug log
     try {
       const response = await fetch(`${API_URL}/api/foods/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFood),
       });
       if (!response.ok) {
         const errorText = await response.text(); // Get detailed error message
-        throw new Error(`Failed to update menu item: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(
+          `Failed to update menu item: ${response.status} ${response.statusText} - ${errorText}`
+        );
       }
       return response.json();
     } catch (err) {
-      console.error('Update error:', err);
+      console.error("Update error:", err);
       throw err;
     }
   },
 
+  // delete a menu item
   async deleteMenuItem(id) {
     const response = await fetch(`${API_URL}/api/foods/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
-    if (!response.ok) throw new Error(`Failed to delete menu item: ${response.status} ${response.statusText}`);
+    if (!response.ok)
+      throw new Error(
+        `Failed to delete menu item: ${response.status} ${response.statusText}`
+      );
     return response.ok;
   },
-
 
   // Settings API
   getSettings() {
@@ -482,17 +348,4 @@ export const api = {
     };
     return settings;
   },
-
-
 };
-
-
-
-
-
-
-
-
-
-
-
