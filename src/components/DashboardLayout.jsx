@@ -10,7 +10,6 @@ export default function DashboardLayout({ children }) {
     { name: "Dashboard", path: "/dashboard", icon: "📊" },
     { name: "Menu Items", path: "/menu", icon: "🍔" },
     { name: "Orders", path: "/orders", icon: "📦" },
-    { name: "Customers", path: "/customers", icon: "👥" },
     { name: "Analytics", path: "/analytics", icon: "📈" },
     { name: "Settings", path: "/settings", icon: "⚙️" },
   ];

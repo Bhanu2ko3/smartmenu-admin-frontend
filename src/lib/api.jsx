@@ -1,3 +1,6 @@
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://smartmenu-backend.up.railway.app";
+
 let menuItems = [
   {
     id: "FOOD001",
@@ -132,55 +135,77 @@ let orders = [
   },
 ];
 
-//Actual data fetching API implementation
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://smartmenu-backend.up.railway.app";
+// Dummy fallback data
+const fallbackAnalyticsData = {
+  metrics: {
+    totalOrders: 1234,
+    totalRevenue: 789000,
+    avgOrderValue: 639.48,
+    activeTables: 3,
+  },
+  dailyOrders: [
+    { date: "2025-05-22", count: 10, revenue: 7500 },
+    { date: "2025-05-23", count: 15, revenue: 9000 },
+    { date: "2025-05-24", count: 12, revenue: 8400 },
+    { date: "2025-05-25", count: 18, revenue: 10800 },
+    { date: "2025-05-26", count: 20, revenue: 12000 },
+    { date: "2025-05-27", count: 22, revenue: 13200 },
+    { date: "2025-05-28", count: 25, revenue: 15000 },
+  ],
+  tableOccupancy: [
+    { tableNumber: 5, orders: 8, lastUsed: "2025-05-28T10:30:00Z" },
+    { tableNumber: 12, orders: 5, lastUsed: "2025-05-27T15:45:00Z" },
+    { tableNumber: 8, orders: 3, lastUsed: "2025-05-28T12:00:00Z" },
+  ],
+  popularItems: [
+    { id: "1", name: "Chicken Biryani", orders: 75, revenue: 56250 },
+    { id: "2", name: "Margherita Pizza", orders: 60, revenue: 48000 },
+    { id: "3", name: "Fish Curry", orders: 45, revenue: 33750 },
+  ],
+};
+
+const fallbackDashboardData = {
+  menuItemsCount: 50,
+  ordersSummary: {
+    total: 150,
+    pending: 20,
+    preparing: 30,
+    completed: 100,
+  },
+  mostSoldItems: [
+    { foodId: "1", name: "Chicken Biryani", quantitySold: 75 },
+    { foodId: "2", name: "Margherita Pizza", quantitySold: 60 },
+    { foodId: "3", name: "Fish Curry", quantitySold: 45 },
+    { foodId: "4", name: "Fried Rice", quantitySold: 30 },
+    { foodId: "5", name: "Chocolate Cake", quantitySold: 25 },
+  ],
+  totalSales: 1250000,
+};
 
 export const api = {
+
   // Dashboard API
-
   async getDashboardData() {
-    return {
-      menuItemsCount: 50,
-      ordersSummary: {
-        total: 150,
-        pending: 20,
-        preparing: 30,
-        completed: 100,
-      },
-      mostSoldItems: [
-        { foodId: "1", name: "Chicken Biryani", quantitySold: 75 },
-        { foodId: "2", name: "Margherita Pizza", quantitySold: 60 },
-        { foodId: "3", name: "Fish Curry", quantitySold: 45 },
-        { foodId: "4", name: "Fried Rice", quantitySold: 30 },
-        { foodId: "5", name: "Chocolate Cake", quantitySold: 25 },
-      ],
-      totalSales: 1250000,
-    };
-
-    /*try {
-      // Simulate fetching data from /api/dashboard
-      const response = await fetch(`${API_URL}/api/dashboard`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
-      }
-      const data = await response.json();
-      return {
-        menuItemsCount: data.menuItemsCount || 0,
-        ordersSummary: {
-          total: data.ordersSummary?.total || 0,
-          pending: data.ordersSummary?.pending || 0,
-          preparing: data.ordersSummary?.preparing || 0,
-          completed: data.ordersSummary?.completed || 0,
-        },
-        mostSoldItems: data.mostSoldItems || [],
-        totalSales: data.totalSales || 0,
-      };
+    try {
+      // return dummy data directly
+      console.log("Using fallback dashboard data");
+      return fallbackDashboardData;
     } catch (error) {
-      console.error('API Error:', error);
-      throw error;
-    }*/
+      console.error("Error getting dashboard data:", error);
+      return fallbackDashboardData;
+    }
+  },
+
+  async getAnalyticsData() {
+    try {
+      // return dummy data directly
+      console.log("Using fallback analytics data");
+      return fallbackAnalyticsData;
+    } catch (error) {
+      console.error("Error getting analytics data:", error);
+      return fallbackAnalyticsData;
+    }
   },
 
   //orders api
