@@ -14,12 +14,21 @@ export default function Settings() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
+  const [loading, setLoading] = useState(true); // <-- Add this line
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const data = api.getSettings();
-      setSettings(data);
+      try {
+        const data = await api.getSettings(); // Make sure this returns a Promise
+        setSettings(data);
+      } catch (error) {
+        toast.error("Failed to load settings.");
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false); // <-- Set loading to false once done
+      }
     };
+
     fetchSettings();
   }, []);
 
@@ -39,7 +48,7 @@ export default function Settings() {
         phone: formData.get("phone"),
         address: formData.get("address"),
       };
-      const result = api.updateSettings(updatedSettings);
+      const result = await api.updateSettings(updatedSettings); // Add await here
       setSettings(result);
       toast.success("Settings updated successfully!");
     } catch (error) {
@@ -49,7 +58,6 @@ export default function Settings() {
       setIsSubmitting(false);
     }
   };
-
   return (
     <DashboardLayout>
       <div className="bg-white rounded-lg shadow-lg p-6">
