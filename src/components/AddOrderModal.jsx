@@ -1,13 +1,13 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { api } from '../lib/api';
-import { toast } from 'react-toastify'; 
+"use client";
+import { useState, useEffect } from "react";
+import { api } from "../lib/api";
+import { toast } from "react-toastify";
 
 export default function AddOrderModal({ isOpen, onClose, onAdd }) {
   const [menuItems, setMenuItems] = useState([]);
   const [formData, setFormData] = useState({
-    tableNumber: '',
-    items: [{ foodId: '', quantity: 1 }],
+    tableNumber: "",
+    items: [{ foodId: "", quantity: 1 }],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -17,11 +17,11 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
       try {
         setLoading(true);
         const menuItemsData = await api.getMenuItems();
-        console.log('Fetched menuItems:', menuItemsData); // Debug
+        console.log("Fetched menuItems:", menuItemsData); // Debug
         setMenuItems(menuItemsData);
       } catch (error) {
-        console.error('Error fetching menu items:', error);
-        toast.error('Failed to load menu items');
+        console.error("Error fetching menu items:", error);
+        toast.error("Failed to load menu items");
       } finally {
         setLoading(false);
       }
@@ -34,7 +34,7 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
   const handleAddItem = () => {
     setFormData((prev) => ({
       ...prev,
-      items: [...prev.items, { foodId: '', quantity: 1 }],
+      items: [...prev.items, { foodId: "", quantity: 1 }],
     }));
   };
 
@@ -48,7 +48,10 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
   const handleItemChange = (index, field, value) => {
     setFormData((prev) => {
       const newItems = [...prev.items];
-      newItems[index] = { ...newItems[index], [field]: field === 'quantity' ? parseInt(value) || 1 : value };
+      newItems[index] = {
+        ...newItems[index],
+        [field]: field === "quantity" ? parseInt(value) || 1 : value,
+      };
       return { ...prev, items: newItems };
     });
   };
@@ -60,13 +63,13 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
 
     const tableNumber = parseInt(formData.tableNumber);
     if (!tableNumber || tableNumber < 1) {
-      toast.error('Please enter a valid table number');
+      toast.error("Please enter a valid table number");
       setIsSubmitting(false);
       return;
     }
 
     if (formData.items.some((item) => !item.foodId || item.quantity < 1)) {
-      toast.error('Please select valid items and quantities');
+      toast.error("Please select valid items and quantities");
       setIsSubmitting(false);
       return;
     }
@@ -74,22 +77,22 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
     try {
       const newOrder = {
         tableNumber,
-        items: formData.items.map(item => ({
+        items: formData.items.map((item) => ({
           foodId: item.foodId,
           quantity: item.quantity,
         })),
-        status: 'Pending',
+        status: "Pending",
       };
-      console.log('Submitting order:', newOrder); // Debug
+      console.log("Submitting order:", newOrder); // Debug
       const result = await api.addOrder(newOrder);
-      console.log('Order added:', result); // Debug
+      console.log("Order added:", result); // Debug
       onAdd(result);
       onClose();
       toast.success(`Order added successfully`);
-      setFormData({ tableNumber: '', items: [{ foodId: '', quantity: 1 }] });
+      setFormData({ tableNumber: "", items: [{ foodId: "", quantity: 1 }] });
     } catch (error) {
-      console.error('Error adding order:', error);
-      toast.error('Failed to add order: ' + error.message);
+      console.error("Error adding order:", error);
+      toast.error("Failed to add order: " + error.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -116,23 +119,31 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
         <h2 className="text-xl font-bold mb-4 text-gray-900">Add New Order</h2>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Table Number</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Table Number
+            </label>
             <input
               type="number"
               value={formData.tableNumber}
-              onChange={(e) => setFormData({ ...formData, tableNumber: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, tableNumber: e.target.value })
+              }
               min="1"
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Items</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Items
+            </label>
             {formData.items.map((item, index) => (
               <div key={index} className="flex gap-2 mb-2">
                 <select
                   value={item.foodId}
-                  onChange={(e) => handleItemChange(index, 'foodId', e.target.value)}
+                  onChange={(e) =>
+                    handleItemChange(index, "foodId", e.target.value)
+                  }
                   required
                   className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
                 >
@@ -146,7 +157,9 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
                 <input
                   type="number"
                   value={item.quantity}
-                  onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                  onChange={(e) =>
+                    handleItemChange(index, "quantity", e.target.value)
+                  }
                   min="1"
                   required
                   className="w-20 mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-900 focus:ring-2 focus:ring-indigo-900/20"
@@ -176,7 +189,7 @@ export default function AddOrderModal({ isOpen, onClose, onAdd }) {
               disabled={isSubmitting || loading}
               className="bg-blue-900 text-white px-4 py-2 rounded-md hover:bg-blue-800 disabled:bg-blue-600"
             >
-              {isSubmitting ? 'Adding...' : 'Add Order'}
+              {isSubmitting ? "Adding..." : "Add Order"}
             </button>
             <button
               type="button"

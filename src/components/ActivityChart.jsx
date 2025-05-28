@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useEffect, useRef } from "react";
+import Chart from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 export default function ActivityChart() {
   const chartRef = useRef(null);
@@ -11,28 +11,28 @@ export default function ActivityChart() {
       chartRef.current.destroy();
     }
 
-    const ctx = canvasRef.current.getContext('2d');
+    const ctx = canvasRef.current.getContext("2d");
 
     // Register plugin
     Chart.register(ChartDataLabels);
 
     chartRef.current = new Chart(ctx, {
-      type: 'bar',
+      type: "bar",
       data: {
-        labels: ['Pending', 'Preparing', 'Completed'],
+        labels: ["Pending", "Preparing", "Completed"],
         datasets: [
           {
-            label: 'Orders by Status',
+            label: "Orders by Status",
             data: [20, 30, 100], // Replace with dynamic data
             backgroundColor: [
-              'rgba(255, 159, 64, 0.8)', // iOS-like orange
-              'rgba(0, 122, 255, 0.8)', // iOS system blue
-              'rgba(52, 199, 89, 0.8)', // iOS system green
+              "rgba(255, 159, 64, 0.8)", // iOS-like orange
+              "rgba(0, 122, 255, 0.8)", // iOS system blue
+              "rgba(52, 199, 89, 0.8)", // iOS system green
             ],
             borderColor: [
-              'rgba(255, 159, 64, 1)',
-              'rgba(0, 122, 255, 1)',
-              'rgba(52, 199, 89, 1)',
+              "rgba(255, 159, 64, 1)",
+              "rgba(0, 122, 255, 1)",
+              "rgba(52, 199, 89, 1)",
             ],
             borderWidth: 1,
             borderRadius: 10,
@@ -50,37 +50,41 @@ export default function ActivityChart() {
           },
           title: {
             display: true,
-            text: 'Order Status Overview',
-            color: '#1C2526',
+            text: "Order Status Overview",
+            color: "#1C2526",
             font: {
               size: 16,
-              weight: '600',
-              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+              weight: "600",
+              family:
+                "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
             },
             padding: { top: 0, bottom: 12 },
           },
           tooltip: {
-            backgroundColor: 'rgba(28, 37, 38, 0.9)',
+            backgroundColor: "rgba(28, 37, 38, 0.9)",
             titleFont: {
               size: 13,
-              weight: '500',
-              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+              weight: "500",
+              family:
+                "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
             },
             bodyFont: {
               size: 12,
-              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+              family:
+                "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
             },
             padding: 10,
             cornerRadius: 10,
             displayColors: false,
           },
           datalabels: {
-            anchor: 'end',
-            align: 'top',
-            color: '#1C2526',
+            anchor: "end",
+            align: "top",
+            color: "#1C2526",
             font: {
-              family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
-              weight: '600',
+              family:
+                "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+              weight: "600",
               size: 11,
             },
             formatter: (value) => `${value} orders`,
@@ -93,26 +97,28 @@ export default function ActivityChart() {
           y: {
             beginAtZero: true,
             grid: {
-              color: 'rgba(0, 0, 0, 0.05)',
+              color: "rgba(0, 0, 0, 0.05)",
               drawBorder: false,
             },
             ticks: {
               stepSize: 25,
-              color: 'rgba(28, 37, 38, 0.7)',
+              color: "rgba(28, 37, 38, 0.7)",
               font: {
-                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+                family:
+                  "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
                 size: 11,
               },
               padding: 6,
             },
             title: {
               display: true,
-              text: 'Number of Orders',
-              color: 'rgba(28, 37, 38, 0.7)',
+              text: "Number of Orders",
+              color: "rgba(28, 37, 38, 0.7)",
               font: {
                 size: 12,
-                weight: '500',
-                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+                weight: "500",
+                family:
+                  "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
               },
               padding: { top: 0, bottom: 8 },
             },
@@ -123,21 +129,23 @@ export default function ActivityChart() {
               drawBorder: false,
             },
             ticks: {
-              color: 'rgba(28, 37, 38, 0.7)',
+              color: "rgba(28, 37, 38, 0.7)",
               font: {
-                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+                family:
+                  "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
                 size: 12,
-                weight: '500',
+                weight: "500",
               },
             },
             title: {
               display: true,
-              text: 'Order Status',
-              color: 'rgba(28, 37, 38, 0.7)',
+              text: "Order Status",
+              color: "rgba(28, 37, 38, 0.7)",
               font: {
                 size: 12,
-                weight: '500',
-                family: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+                weight: "500",
+                family:
+                  "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
               },
               padding: { top: 8, bottom: 0 },
             },
