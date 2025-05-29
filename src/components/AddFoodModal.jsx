@@ -141,10 +141,13 @@ export default function AddFoodModal({ isOpen, onClose, onAdd }) {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                 >
                   <option value="">Select Category</option>
-                  <option value="Main">Main</option>
-                  <option value="Breakfast">Breakfast</option>
-                  <option value="Side">Side</option>
-                  <option value="Dessert">Dessert</option>
+                  <option value="Main Courses">Main Courses</option>
+                  <option value="Appetizers & Starters">Appetizers & Starters</option>
+                  <option value="Salads">Salads</option>
+                  <option value="Light Bites & Snacks">Light Bites & Snacks</option>
+                  <option value="Desserts">Desserts</option>
+                  <option value="Beverages">Beverages</option>
+                  <option value="Wine & Cocktails">Wine & Cocktails</option>
                 </select>
               </div>
 
