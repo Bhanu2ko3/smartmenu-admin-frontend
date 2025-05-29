@@ -56,8 +56,8 @@ export default function EditFoodModal({ isOpen, onClose, onUpdate, food }) {
     }
     if (
       !updatedFood.category ||
-      !["Main", "Breakfast", "Side", "Dessert"].includes(updatedFood.category)
-    ) {
+      !["Main Courses", "Appetizers & Starters", "Salads", "Light Bites & Snacks", "Desserts", "Beverages", "Wine & Cocktails"].includes(updatedFood.category)
+    ) {   
       toast.error("Please select a valid category");
       setIsSubmitting(false);
       return;
